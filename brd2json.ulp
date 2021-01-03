@@ -1,6 +1,8 @@
 int supplylayers[];
 int firstentry;
 
+int SPEC_VERSION = 1;
+
 void Error(string s)
 {
 	string cmd;
@@ -82,12 +84,13 @@ board(B)
 	int thisl;
 	output(fileName,"wt")
 	{
-		printf("{ \"_source\": \"eagle\",\n");
+		printf("");
 		// overall 'pcbdata' object
-		printf("\"pcbdata\": \n");
+		printf("{\n\"_type\": \"interactivehtmlbom genericjson\",\n\"pcbdata\": {\n      \"_type\": \"interactivehtmlbom pcbdata\",\n      \"_spec_version\": 1,\n      \"object\": {\n");
+		//printf(",      \"components\": {\n            \"_type\": \"interactivehtmlbom components\",\n            \"object\": [\n");
 		
 		// edges bbox
-		printf("{\n      \"edges_bbox\": {\"minx\": %f, \"miny\": %f, \"maxx\": %f, \"maxy\": %f},\n", u2inch(B.area.x1), -u2inch(B.area.y1), u2inch(B.area.x2), -u2inch(B.area.y2));
+		printf("      \"edges_bbox\": {\"minx\": %f, \"miny\": %f, \"maxx\": %f, \"maxy\": %f},\n", u2inch(B.area.x1), -u2inch(B.area.y1), u2inch(B.area.x2), -u2inch(B.area.y2));
 		
 		// edges (outline - from layer 20 'Dimension')
 		printf("      \"edges\": [\n");
@@ -225,10 +228,10 @@ board(B)
 		printf("            \"revision\": \"%s\",\n            \"company\": \"%s\",\n            \"date\": \"%s\"\n      },\n", "", "", tmpstr);
 		printf("      \"bom\": {},\n      \"font_data\": {}\n");
 		
-		printf("}\n"); // end of pcbdata object
+		printf("      }\n}\n"); // end of pcbdata object
 		
 		// components object
-		printf(",      \"components\": {\n            \"_type\": \"InteractiveHtmlBom.ecad.common.Component\",\n            \"object\": [\n");
+		printf(", \"components\": {\n      \"_type\": \"interactivehtmlbom components\",\n      \"_spec_version\": 1,\n      \"object\": [\n");
 		firstentry = 1;
 		B.elements(E)
 		{
