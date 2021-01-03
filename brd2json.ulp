@@ -1,0 +1,254 @@
+int supplylayers[];
+int firstentry;
+
+void Error(string s)
+{
+	string cmd;
+	for(int x=0;x<argc;x++) cmd+=argv[x]+" ";
+	dlgMessageBox(cmd+"\n"+s);
+	exit(EXIT_FAILURE);
+}
+
+void AddWire(UL_WIRE W,int L)
+{
+	if(W.layer!=L) return;
+
+	printf("                  ");
+	if(!firstentry) printf(",");
+	firstentry = 0;
+	if(W.arc) printf("{\"type\": \"arc\", \"svgpath\": \"M %f %f A %f %f 0 1 0 %f %f\", \"width\": %f}\n", u2inch(W.arc.x1), -u2inch(W.arc.y1), u2inch(W.arc.radius), u2inch(W.arc.radius), u2inch(W.arc.x2), -u2inch(W.arc.y2), u2inch(W.width));
+	else printf("{\"type\": \"segment\", \"start\": [%f,%f], \"end\": [%f, %f], \"width\": %f}\n", u2inch(W.x1), -u2inch(W.y1), u2inch(W.x2), -u2inch(W.y2), u2inch(W.width));
+}
+
+void AddHole(UL_HOLE H,int L)
+{
+	
+	printf("                  ");
+	if(!firstentry) printf(",");
+	firstentry = 0;
+	printf("{\"type\": \"circle\", \"start\": [%f,%f], \"radius\": %f, \"width\": %f}\n", u2inch(H.x), -u2inch(H.y), u2inch(H.drill)/2, 0.005);
+}
+
+void AddCircle(UL_CIRCLE C,int L)
+{
+	int d;
+	if(C.layer!=L) return;
+	
+	printf("                  ");
+	if(!firstentry) printf(",");
+	firstentry = 0;
+	printf("{\"type\": \"circle\", \"start\": [%f,%f], \"radius\": %f, %f, \"width\": %f}\n", u2inch(C.x), -u2inch(C.y), u2inch(C.radius), u2inch(C.width));
+}
+
+//TODO: implement this
+void AddRect(UL_RECTANGLE R,int L)
+{
+	int d;
+	if(R.layer!=L) return;
+}
+
+// TODO: implement this
+void AddPoly(UL_POLYGON P,int L)
+{
+	int d;
+	int first=1;
+	int tmpx,tmpy;
+	int fastfill;
+
+	if(P.layer!=L) return;
+}
+
+board(B)
+{
+	int d,x,y;
+	int lays[];
+	int laycnt;
+
+	string tmpstr;
+	string tmpstrarr[];
+	string fileName;
+	string lname="unnamed";
+	string layernames[];
+
+	B.layers(L)
+	{
+		if(strsub(L.name,0,1)=="$") supplylayers[L.number]=1;
+		else supplylayers[L.number]=0;
+		layernames[L.number]=L.name;
+	}
+
+	sprintf(fileName,"%s.json",filesetext(B.name, ""));
+
+	int thisl;
+	output(fileName,"wt")
+	{
+		printf("{ \"_source\": \"eagle\",\n");
+		// overall 'pcbdata' object
+		printf("\"pcbdata\": \n");
+		
+		// edges bbox
+		printf("{\n      \"edges_bbox\": {\"minx\": %f, \"miny\": %f, \"maxx\": %f, \"maxy\": %f},\n", u2inch(B.area.x1), -u2inch(B.area.y1), u2inch(B.area.x2), -u2inch(B.area.y2));
+		
+		// edges (outline - from layer 20 'Dimension')
+		printf("      \"edges\": [\n");
+		firstentry=1;
+		B.wires(W) AddWire(W,20);
+		//B.polygons(P) AddPoly(P,thisl);
+		B.rectangles(R) AddRect(R,20);
+		B.circles(C) AddCircle(C,20);
+		B.holes(H) AddHole(H,20);
+		printf("      ],\n"); // end edges
+		
+		// silkscreen
+		printf("      \"silkscreen\": {\n");
+		int silk_layers[] = {21,25,22,26};
+		int e;
+		firstentry=1;
+		for(d=0;d<4;d+=2) 
+		{		
+			if(d==0)
+				printf("            \"F\": [\n");
+			else
+				printf("            ],\n            \"B\": [\n");
+			for(e=0; e<2; e++)
+			{
+				thisl=silk_layers[d+e];
+
+				//printf("Data for layer %d (%s)*\n",thisl,layernames[thisl]);
+		
+				B.wires(W) AddWire(W,thisl);
+				//B.polygons(P) AddPoly(P,thisl);
+				B.rectangles(R) AddRect(R,thisl);
+				B.circles(C) AddCircle(C,thisl);
+				B.texts(T) T.wires(W) AddWire(W,thisl);
+				//B.holes(H) AddHole(H,thisl);
+			}
+		}
+		printf("            ]\n      },\n"); //end silkscreen bottom
+		
+		//fabrication
+		printf("      \"fabrication\": {\n            \"F\": [],\n            \"B\": []\n      },\n");
+		
+		// footprints
+		status("Plotting elements");
+		printf("      \"footprints\": [\n");
+		firstentry = 1;
+		B.elements(E)
+		{
+			int contactcount = 0;
+			E.package.contacts(C) contactcount++;
+			if(E.populate && contactcount) {
+				if(firstentry)
+					printf("            {\n");
+				else
+					printf("            ,{\n");
+				firstentry = 0;
+				
+				//ref
+				printf("                  \"ref\": \"%s\",\n", E.name);
+				
+				//center
+				printf("                  \"center\": [%f, %f],\n", u2inch(E.x), -u2inch(E.y)); 
+								
+				// bbox
+				printf("                  \"bbox\": {\n");
+				real xmax = -999.0, xmin = 999.0, ymax = xmax, ymin = xmin, dx, dy;
+				E.package.contacts(C) {
+					if(C.smd) {
+						dx = abs((u2inch(C.smd.dx)/2)*cos(C.smd.angle)) + abs((u2inch(C.smd.dy)/2)*sin(C.smd.angle));
+						dy = abs((u2inch(C.smd.dx)/2)*sin(C.smd.angle)) + abs((u2inch(C.smd.dy)/2)*cos(C.smd.angle));
+					} else {
+						dx = u2inch(C.pad.diameter[LAYER_TOP])/2;
+						dy = dx;
+					}
+					if (u2inch(C.x) + dx > xmax) xmax = u2inch(C.x) + dx;
+					if (u2inch(C.y) + dy > ymax) ymax = u2inch(C.y) + dy;
+					if (u2inch(C.x) - dx < xmin) xmin = u2inch(C.x) - dx;
+					if (u2inch(C.y) - dy < ymin) ymin = u2inch(C.y) - dy;
+				}
+				dx = abs(xmax - xmin);
+				dy = abs(ymax-ymin);
+				printf("                        \"pos\": [%f, %f],\n", (xmin+xmax-dx)/2, -(ymin+ymax+dy)/2);
+				printf("                        \"relpos\": [0, 0],\n");
+				printf("                        \"size\": [%f, %f],\n", dx, dy);
+				printf("                        \"angle\": %f\n", 0.0); // E.angle);
+				printf("                  },\n"); // end bbox
+				
+				// pads
+				printf("                  \"pads\": [\n");
+				int firstpad = 1;
+				E.package.contacts(C) {
+					if(firstpad)	{	printf("                        {\n                              \"layers\": "); firstpad = 0; }
+					else			{	printf("                        ,{\n                              \"layers\": ");	}
+					
+					if(C.smd) {
+						int layer = E.mirror ? LAYER_BOTTOM : LAYER_TOP;
+						if(layer == LAYER_BOTTOM) printf("[\"B\"],\n");
+						else printf("[\"F\"],\n");
+						
+						printf("                              \"pos\": [%f, %f],\n", u2inch(C.x), -u2inch(C.y));
+						printf("                              \"size\": [%f, %f],\n", u2inch(C.smd.dx[layer]), u2inch(C.smd.dy[layer])); 
+						printf("                              \"angle\": %f,\n", C.smd.angle); 
+						printf("                              \"shape\": \"rect\",\n"); //TODO: make this work for other pad shapes...
+						printf("                              \"type\": \"smd\"\n");
+						if(C.smd.name == "1") printf("                              ,\"pin1\": 1\n");
+					} else {
+						printf("[\"F\", \"B\"],\n");
+						printf("                              \"pos\": [%f, %f],\n", u2inch(C.x), -u2inch(C.y));
+						printf("                              \"size\": [%f, %f],\n", u2inch(C.pad.diameter[LAYER_TOP]), u2inch(C.pad.diameter[LAYER_TOP]));
+						printf("                              \"angle\": %f,\n", C.pad.angle); 
+						if(C.pad.shape[LAYER_TOP] == PAD_SHAPE_SQUARE) 	printf("                              \"shape\": \"rect\",\n"); 
+						else if (C.pad.shape[LAYER_TOP] == PAD_SHAPE_LONG)	printf("                              \"shape\": \"oval\",\n");
+						else									printf("                              \"shape\": \"circle\",\n");
+						printf("                              \"type\": \"th\",\n");
+						if(C.pad.name == "1") printf("                              \"pin1\": 1,\n");
+						printf("                              \"drillshape\": \"oblong\",\n");
+						printf("                              \"drillsize\": [%f, %f]\n", u2inch(C.pad.drill), u2inch(C.pad.drill));
+					}
+					printf("                        }\n"); // end pad
+				}
+				printf("                  ],\n"); // end pads
+				
+				printf("                  \"drawings\": [],\n");
+				if(E.mirror)	printf("                  \"layer\": \"B\"\n");
+				else 			printf("                  \"layer\": \"F\"\n");
+				printf("            }\n"); //end footprint
+			}
+		}
+		printf("      ],\n"); //end footprints		
+		string a[];
+		int n = strsplit(a, B.name, '/');
+		strsplit(a,a[n-1],'.');
+		printf("      \"metadata\": {\n            \"title\": \"%s\",\n", a[0]);
+		int t = time();
+		sprintf(tmpstr,"%d-%d-%d %d:%02d:%02d", t2year(t), t2month(t)+1, t2day(t), t2hour(t), t2minute(t), t2second(t));
+		printf("            \"revision\": \"%s\",\n            \"company\": \"%s\",\n            \"date\": \"%s\"\n      },\n", "", "", tmpstr);
+		printf("      \"bom\": {},\n      \"font_data\": {}\n");
+		
+		printf("}\n"); // end of pcbdata object
+		
+		// components object
+		printf(",      \"components\": {\n            \"_type\": \"InteractiveHtmlBom.ecad.common.Component\",\n            \"object\": [\n");
+		firstentry = 1;
+		B.elements(E)
+		{
+			int contactcount = 0;
+			E.package.contacts(C) contactcount++;
+			if(E.populate && contactcount) {
+				if(firstentry)	{	printf("            {\n");	firstentry=0;	}
+				else 			{	printf("            ,{\n");	}
+				printf("                  \"attr\": \"%s\",\n",""); // TODO: actually get attributes
+				printf("                  \"footprint\": \"%s\",\n",E.package.name);
+				if(E.mirror)	printf("                  \"layer\": \"B\",\n");
+				else 			printf("                  \"layer\": \"F\",\n");
+				printf("                  \"ref\": \"%s\",\n", E.name);
+				printf("                  \"val\": \"%s\"\n            }\n", E.value);
+			}
+		}
+		printf("      ]\n      }\n"); // end of components object
+		
+		printf("}\n"); // end of overall object
+
+		status("Done");
+	}
+}
