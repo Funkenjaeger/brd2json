@@ -96,14 +96,15 @@ board(B)
 	{
 		// overall 'pcbdata' object
 		printf("{\n");
-		printf(tab(++ilvl) + "\"_type\": \"interactivehtmlbom genericjson\",\n");
-		printf(tab(ilvl) + "\"pcbdata\": {\n");
 		printf(tab(++ilvl) + "\"_type\": \"interactivehtmlbom pcbdata\",\n");
 		printf(tab(ilvl) + "\"_spec_version\": 1,\n");
-		printf(tab(ilvl) + "\"object\": {\n");
+		printf(tab(ilvl++) + "\"pcbdata\": {\n");
+		//printf(tab(++ilvl) + "\"_type\": \"interactivehtmlbom pcbdata\",\n");
+		//printf(tab(ilvl) + "\"_spec_version\": 1,\n");
+		//printf(tab(ilvl) + "\"object\": {\n");
 		
 		// edges bbox
-		printf(tab(++ilvl) + "\"edges_bbox\": {\"minx\": %f, \"miny\": %f, \"maxx\": %f, \"maxy\": %f},\n", u2inch(B.area.x1), -u2inch(B.area.y1), u2inch(B.area.x2), -u2inch(B.area.y2));
+		printf(tab(ilvl) + "\"edges_bbox\": {\"minx\": %f, \"miny\": %f, \"maxx\": %f, \"maxy\": %f},\n", u2inch(B.area.x1), -u2inch(B.area.y1), u2inch(B.area.x2), -u2inch(B.area.y2));
 		
 		// edges (outline - from layer 20 'Dimension')
 		printf(tab(ilvl) + "\"edges\": [\n");
@@ -256,14 +257,14 @@ board(B)
 		printf(tab(ilvl) + "\"bom\": {},\n"); 
 		printf(tab(ilvl) + "\"font_data\": {}\n");
 		
-		printf(tab(--ilvl) + "}\n"); // end of inner pcbdata object
+		//printf(tab(--ilvl) + "}\n"); // end of inner pcbdata object
 		printf(tab(--ilvl) + "}\n"); // end of pcbdata object
 		
 		// components object
-		printf(tab(ilvl++) + ",\"components\": {\n"); 
-		printf(tab(ilvl) + "\"_type\": \"interactivehtmlbom components\",\n"); 
-		printf(tab(ilvl) + "\"_spec_version\": 1,\n"); 
-		printf(tab(ilvl++) + "\"object\": [\n");
+		printf(tab(ilvl++) + ",\"components\": [\n"); 
+		//printf(tab(ilvl) + "\"_type\": \"interactivehtmlbom components\",\n"); 
+		//printf(tab(ilvl) + "\"_spec_version\": 1,\n"); 
+		//printf(tab(ilvl++) + "\"object\": [\n");
 		firstentry = 1;
 		B.elements(E)
 		{
@@ -282,7 +283,7 @@ board(B)
 			}
 		}
 		printf(tab(--ilvl) + "]\n"); // end of components list
-		printf(tab(--ilvl) + "}\n"); // end of components object
+		//printf(tab(--ilvl) + "}\n"); // end of components object
 		
 		printf(tab(--ilvl) + "}\n"); // end of overall object
 
