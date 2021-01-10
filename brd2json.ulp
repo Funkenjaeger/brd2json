@@ -99,9 +99,6 @@ board(B)
 		printf(tab(++ilvl) + "\"_type\": \"interactivehtmlbom pcbdata\",\n");
 		printf(tab(ilvl) + "\"_spec_version\": 1,\n");
 		printf(tab(ilvl++) + "\"pcbdata\": {\n");
-		//printf(tab(++ilvl) + "\"_type\": \"interactivehtmlbom pcbdata\",\n");
-		//printf(tab(ilvl) + "\"_spec_version\": 1,\n");
-		//printf(tab(ilvl) + "\"object\": {\n");
 		
 		// edges bbox
 		printf(tab(ilvl) + "\"edges_bbox\": {\"minx\": %f, \"miny\": %f, \"maxx\": %f, \"maxy\": %f},\n", u2inch(B.area.x1), -u2inch(B.area.y1), u2inch(B.area.x2), -u2inch(B.area.y2));
@@ -257,14 +254,10 @@ board(B)
 		printf(tab(ilvl) + "\"bom\": {},\n"); 
 		printf(tab(ilvl) + "\"font_data\": {}\n");
 		
-		//printf(tab(--ilvl) + "}\n"); // end of inner pcbdata object
 		printf(tab(--ilvl) + "}\n"); // end of pcbdata object
 		
 		// components object
-		printf(tab(ilvl++) + ",\"components\": [\n"); 
-		//printf(tab(ilvl) + "\"_type\": \"interactivehtmlbom components\",\n"); 
-		//printf(tab(ilvl) + "\"_spec_version\": 1,\n"); 
-		//printf(tab(ilvl++) + "\"object\": [\n");
+		printf(tab(ilvl++) + ",\"components\": [\n");
 		firstentry = 1;
 		B.elements(E)
 		{
@@ -278,12 +271,20 @@ board(B)
 				if(E.mirror)	printf(tab(ilvl) + "\"layer\": \"B\",\n");
 				else 			printf(tab(ilvl) + "\"layer\": \"F\",\n");
 				printf(tab(ilvl) + "\"ref\": \"%s\",\n", E.name);
-				printf(tab(ilvl) + "\"val\": \"%s\"\n", E.value); 
-				printf(tab(--ilvl) + "}\n");
+				printf(tab(ilvl) + "\"val\": \"%s\"\n", E.value);
+				printf(tab(ilvl++) + ",\"extra_fields\": { \n");
+				int firstattribute = 1;
+				E.attributes(A) {
+					printf(tab(ilvl));
+					if(!firstattribute) { printf(","); } 
+					firstattribute = 0;
+					printf("\"%s\": \"%s\"\n", A.name, A.value);
+				}
+				printf(tab(--ilvl) + "}\n"); // end extra fields
+				printf(tab(--ilvl) + "}\n"); // end component
 			}
 		}
 		printf(tab(--ilvl) + "]\n"); // end of components list
-		//printf(tab(--ilvl) + "}\n"); // end of components object
 		
 		printf(tab(--ilvl) + "}\n"); // end of overall object
 
