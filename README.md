@@ -4,13 +4,9 @@
 The primary purpose is to integrate with [openscopeproject/InteractiveHtmlBom](https://github.com/openscopeproject/InteractiveHtmlBom), as the format of the objects in the generated JSON file is aligned with the internal data structures used in that tool.
 
 ## Implementation Status
-Presently (Jan 2 2021) the integration with InteractiveHtmlBom is still a work in progress residing on my fork: [Funkenjaeger/InteractiveHtmlBom](https://github.com/Funkenjaeger/InteractiveHtmlBom/tree/eagle_support).
-
-The ULP is not yet feature-complete, but enough of the baseline capability is in place for it to be generally usable.  The highest-priority to-do items, in no particular order, include:
+The ULP is not yet feature-complete, but enough of the baseline capability is in place for it to be generally usable and compatible with InteractiveHtmlBom.  Current to-do items, in no particular order, include:
 * Text
 * Polygons
-* ULP code cleanup
-* Support extra data fields for each component (To appear as additional columns in generated BOM)
 
 ![brd2json demo](https://j.gifs.com/gZw31k.gif)
 
@@ -24,3 +20,8 @@ The ULP is not yet feature-complete, but enough of the baseline capability is in
 * Finally, pass the .json file as an argument to InteractiveHtmlBom. This is the same as the method listed in the wiki for processing an EasyEDA JSON file.
 
   `python generate_interactive_bom.py "<path>\<boardname>.json"`
+  
+### Extra Fields
+All attributes of each element are inserted in the JSON file for (optional) use.  To display a particular attribute as an additional column in the resulting interactive BOM, use the `--extra-fields` command-line argument.  For instance:
+
+`python generate_interactive_bom.py "<path>\<boardname>.json" --extra-fields ASSY` will include the attribute "ASSY" as an added column - any elements which lack this attribute will simply be blank.
