@@ -48,7 +48,7 @@ void AddCircle(UL_CIRCLE C, int L, int indent)
 	printf(tab(indent));
 	if(!firstentry) printf(",");
 	firstentry = 0;
-	printf("{\"type\": \"circle\", \"start\": [%f,%f], \"radius\": %f, %f, \"width\": %f}\n", u2inch(C.x), -u2inch(C.y), u2inch(C.radius), u2inch(C.width));
+	printf("{\"type\": \"circle\", \"start\": [%f,%f], \"radius\": %f, \"width\": %f}\n", u2inch(C.x), -u2inch(C.y), u2inch(C.radius), u2inch(C.width));
 }
 
 //TODO: implement this
