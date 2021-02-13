@@ -216,8 +216,9 @@ board(B)
 						else printf("[\"F\"],\n");
 						
 						printf(tab(ilvl) + "\"pos\": [%f, %f],\n", u2inch(C.x), -u2inch(C.y));
-						// if the part does not have any flags like cream, stop as it is e.g. a fidutial we can not use the layer attribute
-						if (C.smd.flags) printf(tab(ilvl) + "\"size\": [%f, %f],\n", u2inch(C.smd.dx[layer]), u2inch(C.smd.dy[layer])); 
+						
+						// Workaround: if the part does not have the STOP flag (e.g. certain fiducials), assume we cannot use the layer index
+						if (C.smd.flags & SMD_FLAG_STOP) printf(tab(ilvl) + "\"size\": [%f, %f],\n", u2inch(C.smd.dx[layer]), u2inch(C.smd.dy[layer])); 
 						else printf(tab(ilvl) + "\"size\": [%f, %f],\n", u2inch(C.smd.dx), u2inch(C.smd.dy)); 
 						
 						printf(tab(ilvl) + "\"angle\": %f,\n", C.smd.angle); 
