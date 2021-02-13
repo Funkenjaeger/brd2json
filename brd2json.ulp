@@ -222,7 +222,10 @@ board(B)
 						else printf(tab(ilvl) + "\"size\": [%f, %f],\n", u2inch(C.smd.dx), u2inch(C.smd.dy)); 
 						
 						printf(tab(ilvl) + "\"angle\": %f,\n", C.smd.angle); 
-						printf(tab(ilvl) + "\"shape\": \"rect\",\n"); //TODO: make this work for other pad shapes...
+						printf(tab(ilvl) + "\"shape\": ");
+						//TODO: make this work for 0<roundness<100 (rounded rectangle)
+						if(C.smd.roundness == 100) printf("\"circle\",\n");
+						else printf("\"rect\",\n"); 
 						printf(tab(ilvl) + "\"type\": \"smd\"\n");
 						if(C.smd.name == "1") printf(tab(ilvl) + ",\"pin1\": 1\n");
 					} else {
