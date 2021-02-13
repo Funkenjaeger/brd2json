@@ -28,7 +28,11 @@ void AddWire(UL_WIRE W, int L, int indent)
 	printf(tab(indent));
 	if(!firstentry) printf(",");
 	firstentry = 0;
-	if(W.arc) printf("{\"type\": \"arc\", \"svgpath\": \"M %f %f A %f %f 0 0 0 %f %f\", \"width\": %f}\n", u2inch(W.arc.x1), -u2inch(W.arc.y1), u2inch(W.arc.radius), u2inch(W.arc.radius), u2inch(W.arc.x2), -u2inch(W.arc.y2), u2inch(W.width));
+	if(W.arc) {
+		int rot = 0;
+		if((W.arc.angle2 - W.arc.angle1) > 180) {rot = 1;}
+		printf("{\"type\": \"arc\", \"svgpath\": \"M %f %f A %f %f 0 %d 0 %f %f\", \"width\": %f}\n", u2inch(W.arc.x1), -u2inch(W.arc.y1), u2inch(W.arc.radius), u2inch(W.arc.radius), rot, u2inch(W.arc.x2), -u2inch(W.arc.y2), u2inch(W.width));
+	}
 	else printf("{\"type\": \"segment\", \"start\": [%f,%f], \"end\": [%f, %f], \"width\": %f}\n", u2inch(W.x1), -u2inch(W.y1), u2inch(W.x2), -u2inch(W.y2), u2inch(W.width));
 }
 
