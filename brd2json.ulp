@@ -139,6 +139,7 @@ board(B)
 				B.rectangles(R) AddRect(R,thisl,ilvl);
 				B.circles(C) AddCircle(C,thisl,ilvl);
 				B.texts(T) T.wires(W) AddWire(W,thisl,ilvl);
+				//B.holes(H) AddHole(H,thisl);
 			}
 		}
 		printf(tab(--ilvl) + "]\n"); 
