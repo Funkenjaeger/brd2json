@@ -213,7 +213,7 @@ board(B)
 						
 						printf(tab(ilvl) + "\"pos\": [%f, %f],\n", u2inch(C.x), -u2inch(C.y));
 						printf(tab(ilvl) + "\"size\": [%f, %f],\n", u2inch(C.smd.dx[layer]), u2inch(C.smd.dy[layer])); 
-						printf(tab(ilvl) + "\"angle\": %f,\n", C.smd.angle); 
+						printf(tab(ilvl) + "\"angle\": %f,\n", -C.smd.angle); 
 						printf(tab(ilvl) + "\"shape\": \"rect\",\n"); //TODO: make this work for other pad shapes...
 						printf(tab(ilvl) + "\"type\": \"smd\"\n");
 						if(C.smd.name == "1") printf(tab(ilvl) + ",\"pin1\": 1\n");
