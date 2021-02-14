@@ -221,7 +221,7 @@ board(B)
 						if (C.smd.flags & SMD_FLAG_STOP) printf(tab(ilvl) + "\"size\": [%f, %f],\n", u2inch(C.smd.dx[layer]), u2inch(C.smd.dy[layer])); 
 						else printf(tab(ilvl) + "\"size\": [%f, %f],\n", u2inch(C.smd.dx), u2inch(C.smd.dy)); 
 						
-						printf(tab(ilvl) + "\"angle\": %f,\n", C.smd.angle); 
+						printf(tab(ilvl) + "\"angle\": %f,\n", -C.smd.angle); 
 						printf(tab(ilvl) + "\"shape\": ");
 						//TODO: make this work for 0<roundness<100 (rounded rectangle)
 						if(C.smd.roundness == 100) printf("\"circle\",\n");
