@@ -217,16 +217,34 @@ board(B)
 						
 						printf(tab(ilvl) + "\"pos\": [%f, %f],\n", u2inch(C.x), -u2inch(C.y));
 						
+						int dx, dy;
 						// Workaround: if the part does not have the STOP flag (e.g. certain fiducials), assume we cannot use the layer index
-						if (C.smd.flags & SMD_FLAG_STOP) printf(tab(ilvl) + "\"size\": [%f, %f],\n", u2inch(C.smd.dx[layer]), u2inch(C.smd.dy[layer])); 
-						else printf(tab(ilvl) + "\"size\": [%f, %f],\n", u2inch(C.smd.dx), u2inch(C.smd.dy)); 
+						if (C.smd.flags & SMD_FLAG_STOP) { 
+							dx = C.smd.dx[layer]; 
+							dy = C.smd.dy[layer]; 
+						}
+						else { 
+							dx = C.smd.dx; 
+							dy = C.smd.dy; 
+						} 
+						printf(tab(ilvl) + "\"size\": [%f, %f],\n", u2inch(dx), u2inch(dy));
 						
 						printf(tab(ilvl) + "\"angle\": %f,\n", -C.smd.angle); 
+						
 						printf(tab(ilvl) + "\"shape\": ");
-						//TODO: make this work for 0<roundness<100 (rounded rectangle)
-						if(C.smd.roundness == 100) printf("\"circle\",\n");
-						else printf("\"rect\",\n"); 
+						if(C.smd.roundness == 100 && dx == dy ) {
+							printf("\"circle\",\n");
+						}
+						else if (C.smd.roundness > 0) {
+							printf("\"roundrect\",\n");
+							printf("\"radius\": %f,\n", (real(C.smd.roundness)/100) * (u2inch(min(dx, dy))/2));
+						}
+						else {
+							printf("\"rect\",\n");
+						}						
+						
 						printf(tab(ilvl) + "\"type\": \"smd\"\n");
+
 						if(C.smd.name == "1") printf(tab(ilvl) + ",\"pin1\": 1\n");
 					} else {
 						printf("[\"F\", \"B\"],\n");
