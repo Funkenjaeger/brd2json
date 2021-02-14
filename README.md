@@ -5,7 +5,7 @@ The primary purpose is to integrate with [openscopeproject/InteractiveHtmlBom](h
 
 ## Implementation Status
 The ULP is not yet feature-complete, but enough of the baseline capability is in place for it to be generally usable and compatible with InteractiveHtmlBom.  Current to-do items, in no particular order, include:
-* Text
+* Text using proportional fonts (vector text is now supported)
 * Polygons
 
 ![brd2json demo](https://j.gifs.com/gZw31k.gif)
