@@ -324,4 +324,13 @@ board(B)
 
 		status("Done");
 	}
+	dlgDialog("Success") {
+		dlgHBoxLayout dlgSpacing(640);
+		dlgLabel("Generated JSON file:");
+		dlgTextView(fileName);
+		dlgHBoxLayout {
+		   dlgStretch(1);
+		   dlgPushButton("+OK") dlgAccept();
+		}
+	};
 }
