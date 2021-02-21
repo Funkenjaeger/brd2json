@@ -46,7 +46,6 @@ void AddHole(UL_HOLE H, int L, int indent)
 
 void AddCircle(UL_CIRCLE C, int L, int indent)
 {
-	int d;
 	if(C.layer!=L) return;
 	
 	printf(tab(indent));
@@ -55,11 +54,22 @@ void AddCircle(UL_CIRCLE C, int L, int indent)
 	printf("{\"type\": \"circle\", \"start\": [%f,%f], \"radius\": %f, \"width\": %f}\n", u2inch(C.x), -u2inch(C.y), u2inch(C.radius), u2inch(C.width));
 }
 
-//TODO: implement this
 void AddRect(UL_RECTANGLE R, int L, int indent)
 {
-	int d;
 	if(R.layer!=L) return;
+	printf(tab(indent));
+	if(!firstentry) printf(",");
+	firstentry = 0;
+	
+	// Treat a rectangle as a polyshape, since Eagle draws them as a filled polygon (as opposed to an outline, as it does for Circles)
+	printf("{\"type\": \"polygon\", \"pos\": [0,0], \"angle\": 0, \"polygons\": \n");
+	printf("%s[ [ ",tab(indent+1));
+	printf("[%f,%f],",u2inch(R.x1),-u2inch(R.y1));
+	printf("[%f,%f],",u2inch(R.x2),-u2inch(R.y1));
+	printf("[%f,%f],",u2inch(R.x2),-u2inch(R.y2));
+	printf("[%f,%f],",u2inch(R.x1),-u2inch(R.y2));
+	printf("[%f,%f]",u2inch(R.x1),-u2inch(R.y1));
+	printf(" ] ]\n%s}\n",tab(indent));	
 }
 
 // TODO: implement this
@@ -300,7 +310,7 @@ board(B)
 			if(E.populate && contactcount) {
 				if(firstentry)	{	printf(tab(ilvl++) + "{\n");	firstentry=0;	}
 				else 			{	printf(tab(ilvl++) + ",{\n");	}
-				printf(tab(ilvl) + "\"attr\": \"%s\",\n",""); // TODO: actually get attributes
+				printf(tab(ilvl) + "\"attr\": \"%s\",\n",""); // Note that all Attributes are added to extra_fields
 				printf(tab(ilvl) + "\"footprint\": \"%s\",\n",E.package.name);
 				if(E.mirror)	printf(tab(ilvl) + "\"layer\": \"B\",\n");
 				else 			printf(tab(ilvl) + "\"layer\": \"F\",\n");
@@ -324,6 +334,7 @@ board(B)
 
 		status("Done");
 	}
+	
 	dlgDialog("Success") {
 		dlgHBoxLayout dlgSpacing(640);
 		dlgLabel("Generated JSON file:");
