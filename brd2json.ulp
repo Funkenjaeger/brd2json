@@ -1,5 +1,6 @@
 int supplylayers[];
 int firstentry;
+string nets = "";
 
 int SPEC_VERSION = 1;
 
@@ -358,6 +359,17 @@ board(B)
 		B.signals(S) S.polyPours(P) AddPolyPour(P,16,ilvl,S.name);
 		printf(tab(--ilvl) + "]\n"); 
 		printf(tab(--ilvl) + "},\n");
+		
+		// nets
+		printf(tab(ilvl) + "\"nets\": [");
+		B.signals(S) {
+			if(strstr(nets,"\""+S.name+"\"")<0) {
+				if(strlen(nets)>0) nets = nets + ",";
+				nets = nets + "\""+S.name+"\"";
+			}
+		}
+		printf(nets);
+		printf("],\n");
 		
 		// metadata
 		printf(tab(ilvl++) + "\"metadata\": {\n"); 
