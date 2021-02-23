@@ -36,6 +36,16 @@ void AddWire(UL_WIRE W, int L, int indent)
 	else printf("{\"type\": \"segment\", \"start\": [%f,%f], \"end\": [%f, %f], \"width\": %f}\n", u2inch(W.x1), -u2inch(W.y1), u2inch(W.x2), -u2inch(W.y2), u2inch(W.width));
 }
 
+void AddTrack(UL_WIRE W, int L, int indent, string net)
+{
+	if(W.layer!=L) return;
+
+	printf(tab(indent));
+	if(!firstentry) printf(",");
+	firstentry = 0;	
+	printf("{ \"start\": [%f,%f], \"end\": [%f,%f], \"width\": %f, \"net\": \"%s\"}\n", u2inch(W.x1), -u2inch(W.y1), u2inch(W.x2), -u2inch(W.y2), u2inch(W.width), net);
+}
+
 void AddHole(UL_HOLE H, int L, int indent)
 {
 	printf(tab(indent));
@@ -72,7 +82,7 @@ void AddRect(UL_RECTANGLE R, int L, int indent)
 	printf(" ] ]\n%s}\n",tab(indent));	
 }
 
-void AddPoly(UL_POLYSHAPE P, int L, int indent)
+void AddPolyShape(UL_POLYSHAPE P, int L, int indent)
 {
 	int first = 1;
 
@@ -89,6 +99,41 @@ void AddPoly(UL_POLYSHAPE P, int L, int indent)
 		printf("[%f,%f]",u2inch(W.x1), -u2inch(W.y1));
 	}
 	printf("\n%s]\n%s]\n",tab(indent+2),tab(indent+1));
+	printf("%s}\n",tab(indent));
+}
+
+void AddPolyPour(UL_POLYPOUR P, int L, int indent, string net)
+{
+	int firstpoly = 1;
+	int firstwire = 1;
+
+	if(P.layer!=L) return;
+	
+	printf(tab(indent));
+	if(!firstentry) printf(",");
+	firstentry = 0;
+	
+	printf("{\"polygons\": \n");
+	printf("%s[\n",tab(indent+1));
+	int x0, y0;
+	P.contours(W) {
+			if(firstwire) { 
+				x0 = W.x1; 
+				y0 = W.y1;
+				printf(tab(indent+2));
+				if(firstpoly) firstpoly=0;
+				else printf(",");
+				printf("[\n%s[%f,%f]\n",tab(indent+3),u2inch(W.x1), -u2inch(W.y1));
+			}
+			printf("%s,[%f,%f]\n",tab(indent+3),u2inch(W.x2), -u2inch(W.y2));
+			if (firstwire) firstwire=0;
+			else if (W.x2==x0 && W.y2==y0) { 
+				firstwire = 1; 
+				printf("%s]\n",tab(indent+2)); 
+			}
+	}
+	printf("\n%s]\n",tab(indent+1));
+	printf("%s,\"net\": \"%s\"\n",tab(indent+1),net);
 	printf("%s}\n",tab(indent));
 }
 
@@ -119,7 +164,6 @@ board(B)
 	{
 		// overall 'pcbdata' object
 		printf("{\n");
-		//printf(tab(++ilvl) + "\"_type\": \"interactivehtmlbom pcbdata\",\n");
 		printf(tab(ilvl) + "\"spec_version\": 1,\n");
 		printf(tab(ilvl++) + "\"pcbdata\": {\n");
 		
@@ -131,7 +175,7 @@ board(B)
 		firstentry=1;
 		ilvl++;
 		B.wires(W) AddWire(W,20,ilvl);
-		//B.polygons(P) AddPoly(P,thisl);
+		//B.polygons(P) AddPolyShape(P,thisl);
 		//B.rectangles(R) AddRect(R,20,ilvl);
 		B.circles(C) AddCircle(C,20,ilvl);
 		B.holes(H) AddHole(H,20,ilvl);
@@ -158,7 +202,7 @@ board(B)
 			{
 				thisl=silk_layers[d+e];
 				B.wires(W) AddWire(W,thisl,ilvl);
-				B.polyShapes(P) AddPoly(P,thisl,ilvl);
+				B.polyShapes(P) AddPolyShape(P,thisl,ilvl);
 				B.rectangles(R) AddRect(R,thisl,ilvl);
 				B.circles(C) AddCircle(C,thisl,ilvl);
 				B.texts(T) T.wires(W) AddWire(W,thisl,ilvl);
@@ -293,8 +337,29 @@ board(B)
 		}
 		printf(tab(--ilvl) + "],\n"); //end footprints
 		
-		// metadata
+		// tracks (wires on copper top/bottom copper layers)
+		printf(tab(ilvl++) + "\"tracks\": {\n");
+		printf(tab(ilvl++) + "\"F\": [\n");
+		firstentry = 1;
+		B.signals(S) S.wires(W) AddTrack(W,1,ilvl,S.name);
+		printf(tab(--ilvl) + "],\n" + tab(ilvl++) + "\"B\": [\n");
+		firstentry = 1;
+		B.signals(S) S.wires(W) AddTrack(W,16,ilvl,S.name);
+		printf(tab(--ilvl) + "]\n");
+		printf(tab(--ilvl) + "},\n");
 		
+		// zones (copper pours on top/bottom layers)
+		printf(tab(ilvl++) + "\"zones\": {\n");
+		printf(tab(ilvl++) + "\"F\": [\n");
+		firstentry = 1;
+		B.signals(S) S.polyPours(P) AddPolyPour(P,1,ilvl,S.name);
+		printf(tab(--ilvl) + "],\n" + tab(ilvl++) + "\"B\": [\n");
+		firstentry = 1;
+		B.signals(S) S.polyPours(P) AddPolyPour(P,16,ilvl,S.name);
+		printf(tab(--ilvl) + "]\n"); 
+		printf(tab(--ilvl) + "},\n");
+		
+		// metadata
 		printf(tab(ilvl++) + "\"metadata\": {\n"); 
 		string a[];		
 		int n = strsplit(a, B.name, '/');
