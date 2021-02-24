@@ -6,7 +6,7 @@ The primary purpose is to integrate with [openscopeproject/InteractiveHtmlBom](h
 ## Implementation Status and Limitations
 The ULP is mostly feature-complete.  Some known limitations:
 * __Proportional fonts__ aren't supported (won't be rendered) - use vector fonts if you want them rendered.  An easy solution here is to set the "Always Vector Font" option in the Eagle/Fusion 360 Electronics preferences.
-* __Polygons__ - Autodesk redefined polygon object type(s) in Fusion 360 Electronics.  For now polygons are not supported on the `main` branch, so it remains compatible with both Eagle and Fusion 360 Electronics.  The `fusion` branch adds support for UL_POLYSHAPE for Fusion 360 Electronics, but breaks compatibility with Eagle.
+* __Polygons__ - Autodesk redefined polygon object type(s) in Fusion 360 Electronics - so they are now fully supported on the `main` branch for Fusion 360 Electronics.  The `eagle` branch remains compatible with eagle, but lacks all polygon support (and some related features as consequences)
 
 ![brd2json demo](https://j.gifs.com/gZw31k.gif)
 
