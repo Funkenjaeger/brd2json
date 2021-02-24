@@ -47,6 +47,14 @@ void AddTrack(UL_WIRE W, int L, int indent, string net)
 	printf("{ \"start\": [%f,%f], \"end\": [%f,%f], \"width\": %f, \"net\": \"%s\"}\n", u2inch(W.x1), -u2inch(W.y1), u2inch(W.x2), -u2inch(W.y2), u2inch(W.width), net);
 }
 
+void AddTrackVia(UL_VIA V, int L, int indent, string net)
+{
+	printf(tab(indent));
+	if(!firstentry) printf(",");
+	firstentry = 0;	
+	printf("{ \"start\": [%f,%f], \"end\": [%f,%f], \"width\": %f, \"net\": \"%s\"}\n", u2inch(V.x), -u2inch(V.y), u2inch(V.x), -u2inch(V.y), u2inch(V.diameter[L]), net);
+}
+
 void AddHole(UL_HOLE H, int L, int indent)
 {
 	printf(tab(indent));
@@ -176,8 +184,6 @@ board(B)
 		firstentry=1;
 		ilvl++;
 		B.wires(W) AddWire(W,20,ilvl);
-		//B.polygons(P) AddPolyShape(P,thisl);
-		//B.rectangles(R) AddRect(R,20,ilvl);
 		B.circles(C) AddCircle(C,20,ilvl);
 		B.holes(H) AddHole(H,20,ilvl);
 		printf(tab(--ilvl) + "],\n"); // end edges
@@ -341,11 +347,18 @@ board(B)
 		// tracks (wires on copper top/bottom copper layers)
 		printf(tab(ilvl++) + "\"tracks\": {\n");
 		printf(tab(ilvl++) + "\"F\": [\n");
+		
 		firstentry = 1;
-		B.signals(S) S.wires(W) AddTrack(W,1,ilvl,S.name);
+		B.signals(S) {
+			S.wires(W) AddTrack(W,LAYER_TOP,ilvl,S.name);
+			S.vias(V) AddTrackVia(V,LAYER_TOP,ilvl,S.name);
+		}
 		printf(tab(--ilvl) + "],\n" + tab(ilvl++) + "\"B\": [\n");
 		firstentry = 1;
-		B.signals(S) S.wires(W) AddTrack(W,16,ilvl,S.name);
+		B.signals(S) {
+			S.wires(W) AddTrack(W,LAYER_BOTTOM,ilvl,S.name);
+			S.vias(V) AddTrackVia(V,LAYER_BOTTOM,ilvl,S.name);
+		}
 		printf(tab(--ilvl) + "]\n");
 		printf(tab(--ilvl) + "},\n");
 		
