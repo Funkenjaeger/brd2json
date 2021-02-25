@@ -382,6 +382,7 @@ board(B)
 				nets = nets + "\""+S.name+"\"";
 			}
 		}
+		printf("\"\",");
 		printf(nets);
 		printf("],\n");
 		
