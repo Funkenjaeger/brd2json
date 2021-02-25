@@ -315,7 +315,7 @@ board(B)
 						else {
 							printf("\"rect\",\n");
 						}						
-						
+						printf("%s\"net\": \"%s\",\n", tab(ilvl), C.signal);
 						printf(tab(ilvl) + "\"type\": \"smd\"\n");
 
 						if(C.smd.name == "1") printf(tab(ilvl) + ",\"pin1\": 1\n");
@@ -329,6 +329,7 @@ board(B)
 						else									printf("                              \"shape\": \"circle\",\n");
 						printf("                              \"type\": \"th\",\n");
 						if(C.pad.name == "1") printf("                              \"pin1\": 1,\n");
+						printf("%s\"net\": \"%s\",\n", tab(ilvl), C.signal);
 						printf("                              \"drillshape\": \"oblong\",\n");
 						printf("                              \"drillsize\": [%f, %f]\n", u2inch(C.pad.drill), u2inch(C.pad.drill));
 					}
