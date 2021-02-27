@@ -83,6 +83,24 @@ void AddPoly(UL_POLYGON P, int L, int indent)
 	if(P.layer!=L) return;
 }
 
+string strcrepl(string s_in, char c_from, char c_to)
+{
+	string a[];
+	int n = strsplit(a,s_in,'"');
+	if(n==0) return s_in;
+	else {
+		string s = a[0];
+		for(int ii=0; ii<n-1; ii++) s = s + "\\\"" + a[ii+1];
+		return s;
+	}
+}
+
+string ss(string s_in)
+{
+	string s = strcrepl(s_in,'"','\"');
+	return s;
+}
+
 board(B)
 {
 	int d,x,y;
@@ -313,7 +331,7 @@ board(B)
 				if(firstentry)	{	printf(tab(ilvl++) + "{\n");	firstentry=0;	}
 				else 			{	printf(tab(ilvl++) + ",{\n");	}
 				printf(tab(ilvl) + "\"attr\": \"%s\",\n",""); // Note that all Attributes are added to extra_fields
-				printf(tab(ilvl) + "\"footprint\": \"%s\",\n",E.package.name);
+				printf(tab(ilvl) + "\"footprint\": \"%s\",\n",ss(E.package.name));
 				if(E.mirror)	printf(tab(ilvl) + "\"layer\": \"B\",\n");
 				else 			printf(tab(ilvl) + "\"layer\": \"F\",\n");
 				printf(tab(ilvl) + "\"ref\": \"%s\",\n", E.name);
