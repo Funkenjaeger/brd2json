@@ -3,6 +3,8 @@
 
 The primary purpose is to integrate with [openscopeproject/InteractiveHtmlBom](https://github.com/openscopeproject/InteractiveHtmlBom), as the format of the objects in the generated JSON file is aligned with the internal data structures used in that tool.
 
+## Eagle users: Please use [the `eagle` branch](https://github.com/Funkenjaeger/brd2json/tree/eagle)
+
 ## Implementation Status and Limitations
 The ULP is mostly feature-complete.  Some known limitations:
 * __Proportional fonts__ aren't supported (won't be rendered) - use vector fonts if you want them rendered.  An easy solution here is to set the "Always Vector Font" option in the Eagle/Fusion 360 Electronics preferences.
