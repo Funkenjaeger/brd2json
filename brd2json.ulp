@@ -388,10 +388,10 @@ board(B)
 		printf(tab(ilvl++) + "\"zones\": {\n");
 		printf(tab(ilvl++) + "\"F\": [\n");
 		firstentry = 1;
-		B.signals(S) S.polyPours(P) AddPolyPour(P,1,ilvl,S.name);
+		B.signals(S) S.polyPours(P) AddPolyPour(P,LAYER_TOP,ilvl,S.name);
 		printf(tab(--ilvl) + "],\n" + tab(ilvl++) + "\"B\": [\n");
 		firstentry = 1;
-		B.signals(S) S.polyPours(P) AddPolyPour(P,16,ilvl,S.name);
+		B.signals(S) S.polyPours(P) AddPolyPour(P,LAYER_BOTTOM,ilvl,S.name);
 		printf(tab(--ilvl) + "]\n"); 
 		printf(tab(--ilvl) + "},\n");
 		
