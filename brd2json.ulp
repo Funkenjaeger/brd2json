@@ -164,6 +164,14 @@ string ss(string s_in)
 	return s;
 }
 
+void AppendNet(string net) 
+{
+	if(strstr(nets,"\""+net+"\"")<0) {
+		if(strlen(nets)>0) nets = nets + ",";
+		nets = nets + "\""+net+"\"";
+	}
+}
+
 board(B)
 {
 	int d,x,y;
@@ -389,12 +397,8 @@ board(B)
 		
 		// nets
 		printf(tab(ilvl) + "\"nets\": [");
-		B.signals(S) {
-			if(strstr(nets,"\""+S.name+"\"")<0) {
-				if(strlen(nets)>0) nets = nets + ",";
-				nets = nets + "\""+S.name+"\"";
-			}
-		}
+		B.signals(S) S.wires(W) AppendNet(S.name);
+		B.signals(S) S.vias(V) AppendNet(S.name);
 		printf("\"\",");
 		printf(nets);
 		printf("],\n");
