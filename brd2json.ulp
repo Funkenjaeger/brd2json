@@ -91,7 +91,7 @@ void AddRect(UL_RECTANGLE R, int L, int indent)
 	printf(" ] ]\n%s}\n",tab(indent));	
 }
 
-void AddPolyShape(UL_POLYSHAPE P, int L, int indent)
+void AddPolyShape(UL_POLYGON P, int L, int indent)
 {
 	int first = 1;
 
@@ -111,7 +111,7 @@ void AddPolyShape(UL_POLYSHAPE P, int L, int indent)
 	printf("%s}\n",tab(indent));
 }
 
-void AddPolyPour(UL_POLYPOUR P, int L, int indent, string net)
+void AddPolyPour(UL_POLYGON P, int L, int indent, string net)
 {
 	int firstpoly = 1;
 	int firstwire = 1;
@@ -238,7 +238,7 @@ board(B)
 			{
 				thisl=silk_layers[d+e];
 				B.wires(W) AddWire(W,thisl,ilvl);
-				B.polyShapes(P) AddPolyShape(P,thisl,ilvl);
+				B.polygons(P) AddPolyShape(P,thisl,ilvl);
 				B.rectangles(R) AddRect(R,thisl,ilvl);
 				B.circles(C) AddCircle(C,thisl,ilvl);
 				B.texts(T) T.wires(W) AddWire(W,thisl,ilvl);
@@ -388,10 +388,10 @@ board(B)
 		printf(tab(ilvl++) + "\"zones\": {\n");
 		printf(tab(ilvl++) + "\"F\": [\n");
 		firstentry = 1;
-		B.signals(S) S.polyPours(P) AddPolyPour(P,LAYER_TOP,ilvl,S.name);
+		B.signals(S) S.polygons(P) AddPolyPour(P,LAYER_TOP,ilvl,S.name);
 		printf(tab(--ilvl) + "],\n" + tab(ilvl++) + "\"B\": [\n");
 		firstentry = 1;
-		B.signals(S) S.polyPours(P) AddPolyPour(P,LAYER_BOTTOM,ilvl,S.name);
+		B.signals(S) S.polygons(P) AddPolyPour(P,LAYER_BOTTOM,ilvl,S.name);
 		printf(tab(--ilvl) + "]\n"); 
 		printf(tab(--ilvl) + "},\n");
 		
