@@ -184,6 +184,9 @@ board(B)
 	string lname="unnamed";
 	string layernames[];
 
+	// Workaround to force a ratsnest in Eagle prior to further processing (so polygon pours process correctly)
+	if(argc==1) exit("ratsnest; run brd2json.ulp returning");
+
 	B.layers(L)
 	{
 		if(strsub(L.name,0,1)=="$") supplylayers[L.number]=1;
