@@ -121,18 +121,20 @@ board(B)
 		printf(tab(ilvl) + "\"edges\": [\n");
 		firstentry=1;
 		ilvl++;
-		B.wires(W) AddWire(W,20,ilvl);
-		//B.polygons(P) AddPoly(P,thisl);
-		B.rectangles(R) AddRect(R,20,ilvl);
-		B.circles(C) AddCircle(C,20,ilvl);
-		B.holes(H) AddHole(H,20,ilvl);
+		B.wires(W) AddWire(W,LAYER_DIMENSION,ilvl);
+		B.circles(C) AddCircle(C,LAYER_DIMENSION,ilvl);
+		B.holes(H) AddHole(H,LAYER_DIMENSION,ilvl);
+		B.elements(E) E.footprint.wires(W) AddWire(W,LAYER_DIMENSION,ilvl);
+		B.elements(E) E.footprint.circles(C) AddCircle(C,LAYER_DIMENSION,ilvl);
+		B.elements(E) E.footprint.holes(H) AddHole(H,LAYER_DIMENSION,ilvl);
+		
 		printf(tab(--ilvl) + "],\n"); // end edges
 		
 		// drawings
 		printf(tab(ilvl++) + "\"drawings\": {\n");
 		// silkscreen
 		printf(tab(ilvl) + "\"silkscreen\": {\n");
-		int silk_layers[] = {21,25,22,26};
+		int silk_layers[] = {LAYER_TPLACE,LAYER_TNAMES,LAYER_BPLACE,LAYER_BNAMES};
 		int e;
 		firstentry=1;
 		for(d=0;d<4;d+=2) 
