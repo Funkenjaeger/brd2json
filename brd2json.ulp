@@ -41,10 +41,12 @@ void AddTrack(UL_WIRE W, int L, int indent, string net)
 {
 	if(W.layer!=L) return;
 
-	printf(tab(indent));
-	if(!firstentry) printf(",");
-	firstentry = 0;	
-	printf("{ \"start\": [%f,%f], \"end\": [%f,%f], \"width\": %f, \"net\": \"%s\"}\n", u2inch(W.x1), -u2inch(W.y1), u2inch(W.x2), -u2inch(W.y2), u2inch(W.width), net);
+	if(!W.arc) {
+		printf(tab(indent));
+		if(!firstentry) printf(",");
+		firstentry = 0;	
+		printf("{ \"start\": [%f,%f], \"end\": [%f,%f], \"width\": %f, \"net\": \"%s\"}\n", u2inch(W.x1), -u2inch(W.y1), u2inch(W.x2), -u2inch(W.y2), u2inch(W.width), net);
+	}
 }
 
 void AddTrackVia(UL_VIA V, int L, int indent, string net)
