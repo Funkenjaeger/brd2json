@@ -45,7 +45,7 @@ void AddTrack(UL_WIRE W, int L, int indent, string net)
 	if(!firstentry) printf(",");
 	firstentry = 0;	
 	if(W.arc) {
-		printf("{ \"start\": [%f,%f], \"radius\": %f, \"startangle\": %f, \"endangle\": %f, \"width\": %f, \"net\": \"%s\"}\n", u2inch(W.arc.xc), -u2inch(W.arc.yc), u2inch(W.arc.radius), -W.arc.angle2, -W.arc.angle1, u2inch(W.arc.width), net);
+		printf("{ \"center\": [%f,%f], \"radius\": %f, \"startangle\": %f, \"endangle\": %f, \"width\": %f, \"net\": \"%s\"}\n", u2inch(W.arc.xc), -u2inch(W.arc.yc), u2inch(W.arc.radius), -W.arc.angle2, -W.arc.angle1, u2inch(W.arc.width), net);
 	} else {		
 		printf("{ \"start\": [%f,%f], \"end\": [%f,%f], \"width\": %f, \"net\": \"%s\"}\n", u2inch(W.x1), -u2inch(W.y1), u2inch(W.x2), -u2inch(W.y2), u2inch(W.width), net);
 	}
