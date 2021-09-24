@@ -444,16 +444,18 @@ board(B)
 					printf(tab(ilvl));
 					if(!firstattribute) { printf(","); } 
 					firstattribute = 0;
+					
+					// Escape double quotes:
 					string values[];
-					int len = strsplit(values, A.value, '"'); //"
-					printf("\"%s\": \"", A.name); //"
-						for (int i = 0; i < len; ++i) {
+					int len = strsplit(values, A.value, '"');
+					printf("\"%s\": \"", A.name);
+					for (int i = 0; i < len; ++i) {
 						if (i > 0) {
-							printf("\\\""); // "
+							printf("\\\"");
 						}
 						printf("%s", values[i]);
 					}
-					printf("\"\n"); // "
+					printf("\"\n");
 				}
 				printf(tab(--ilvl) + "}\n"); // end extra fields
 				printf(tab(--ilvl) + "}\n"); // end component
