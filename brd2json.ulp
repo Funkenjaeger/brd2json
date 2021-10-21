@@ -219,9 +219,9 @@ board(B)
 		B.wires(W) AddWire(W,LAYER_DIMENSION,ilvl);
 		B.circles(C) AddCircle(C,LAYER_DIMENSION,ilvl);
 		B.holes(H) AddHole(H,LAYER_DIMENSION,ilvl);
-		B.elements(E) E.footprint.wires(W) AddWire(W,LAYER_DIMENSION,ilvl);
-		B.elements(E) E.footprint.circles(C) AddCircle(C,LAYER_DIMENSION,ilvl);
-		B.elements(E) E.footprint.holes(H) AddHole(H,LAYER_DIMENSION,ilvl);
+		B.elements(E) E.package.wires(W) AddWire(W,LAYER_DIMENSION,ilvl);
+		B.elements(E) E.package.circles(C) AddCircle(C,LAYER_DIMENSION,ilvl);
+		B.elements(E) E.package.holes(H) AddHole(H,LAYER_DIMENSION,ilvl);
 		printf(tab(--ilvl) + "],\n"); // end edges
 		
 		// drawings
@@ -250,8 +250,8 @@ board(B)
 				B.circles(C) AddCircle(C,thisl,ilvl);
 				B.texts(T) T.wires(W) AddWire(W,thisl,ilvl);
 				B.elements(E) E.texts(T) T.wires(W) AddWire(W,thisl,ilvl);
-				B.elements(E) E.footprint.wires(W) AddWire(W,thisl,ilvl);
-				B.elements(E) E.footprint.texts(T) T.wires(W) AddWire(W,thisl,ilvl);
+				B.elements(E) E.package.wires(W) AddWire(W,thisl,ilvl);
+				B.elements(E) E.package.texts(T) T.wires(W) AddWire(W,thisl,ilvl);
 				//B.holes(H) AddHole(H,thisl);
 			}
 		}
