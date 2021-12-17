@@ -406,15 +406,31 @@ board(B)
 		printf("\"\",");
 		printf(nets);
 		printf("],\n");
-		
+				
+		/*new metadata by ei6ku, (copied from iBom.ulp by "sean.alling@gmail.com")
+       		 Iterates over the board attributes looking for 'COMPANY' or 'REVISION' If these attribute exists 
+       		 it returns the values, otherwise it returns empty strings.
+    		*/
+    		string company  = "";
+    		string revision = "";
+   		B.attributes(B){
+        		if( (B.name == "COMPANY") )
+        		{
+            		company = B.value;
+        		}
+        		if( (B.name == "REV") || (B.name == "REVISION"))
+        		{
+            		revision = B.value;
+        		}
+    		}
 		// metadata
 		printf(tab(ilvl++) + "\"metadata\": {\n"); 
 		string a[];		
 		int n = strsplit(a, B.name, '/');
 		strsplit(a,a[n-1],'.');		
 		printf(tab(ilvl) + "\"title\": \"%s\",\n", a[0]);
-		printf(tab(ilvl) + "\"revision\": \"%s\",\n", ""); 
-		printf(tab(ilvl) + "\"company\": \"%s\",\n", ""); 
+		printf(tab(ilvl) + "\"revision\": \"%s\",\n", revision); // updated ei6ku dec 2021
+		printf(tab(ilvl) + "\"company\": \"%s\",\n", company); // updated ei6ku dec 2021
 		int t = time();
 		sprintf(tmpstr,"%d-%d-%d %d:%02d:%02d", t2year(t), t2month(t)+1, t2day(t), t2hour(t), t2minute(t), t2second(t));
 		printf(tab(ilvl) + "\"date\": \"%s\"\n", tmpstr); 
