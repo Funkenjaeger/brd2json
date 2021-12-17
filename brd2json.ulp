@@ -411,7 +411,7 @@ board(B)
 		printf("],\n");
 		
 		
-		/* metadata... added by Dec 2021 by ei6ku, copied from iBom.ulp by "sean.alling@gmail.com"
+		/* metadata... added Dec 2021 by ei6ku, copied from iBom.ulp by "sean.alling@gmail.com"
         	Iterates over the board attributes looking for 'COMPANY' or 'REVISION' If these attribute exists 
        		it returns the value, otherwise returns empty strings.
     		*/
