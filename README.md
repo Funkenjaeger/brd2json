@@ -3,6 +3,9 @@
 
 The primary purpose is to integrate with [openscopeproject/InteractiveHtmlBom](https://github.com/openscopeproject/InteractiveHtmlBom), as the format of the objects in the generated JSON file is aligned with the internal data structures used in that tool.
 
+## Repo archived 11/1/2024
+This ULP is no longer necessary, since native .brd/.fbrd parsing was added to InteractiveHtmlBom in December 2022.
+
 ## Eagle users: Please use [the `eagle` branch](https://github.com/Funkenjaeger/brd2json/tree/eagle)
 
 ## Implementation Status and Limitations
